@@ -11,7 +11,6 @@ var express = require('express'),
     connect = require('express/node_modules/connect'),
     parseSignedCookie = connect.utils.parseSignedCookie,
     cookie = require('express/node_modules/cookie'),
-    MemoryStore = express.session.MemoryStore,
     app = express();
 
 // Основной клиент
@@ -38,7 +37,6 @@ redisSub.on('ready', function() {
     redisSub.psubscribe('pm:*');
 });
 
-var websocketStore = new MemoryStore();
 var sessionKey = 'your secret here';
 var store = null;
 
