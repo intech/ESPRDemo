@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo</title>
+    <script src="/primus/primus.js"></script>
+</head>
+<body>
+<h1>Demo ExpressJS + SockJS + Primus + Redis</h1>
+<script>
+
+    var primus = Primus.connect('http://localhost:3000', {
+        transformer: 'sockjs', parser: 'JSON',
+        strategy: [ 'online', 'timeout', 'diScoNNect' ],
+        network: true,
+        reconnect: {
+            maxDelay: Infinity, // Number: The max delay for a reconnect retry.
+            minDelay: 300, // Number: The minimum delay before we reconnect.
+            retries: Infinity // Number: How many times should we attempt to reconnect.
+        }
+    });
+    primus.on('error', function (err) {
+        console.error('Error', err, err.message);
+    });
+    primus.on('reconnect', function () {
+        console.log('Reconnect attempt started');
+    });
+    primus.on('reconnecting', function (opts) {
+        console.log('Reconnecting in %d ms', opts.timeout);
+        console.log('This is attempt %d out of %d', opts.attempt, opts.retries);
+    });
+    primus.on('end', function () {
+        console.log('Connection closed');
+    });
+    /* Системные события
+    console.log(primus);
+    primus.on('outgoing::open', function(e) {
+        //console.log(e);
+    });
+    primus.on('incoming::error', function(e) {
+        console.log(e);
+    });
+    */
+
+    primus.on('open', function () {
+        console.log('Connection is alive');
+
+        // Подключаемся к комнате
+        primus.write({ event: 'join', to: 'chat' });
+
+        // Обрабатываем сообщения
+        primus.on('data', function (data) {
+            console.log('Received a new message from the server', data);
+
+            switch (data.event) {
+
+                case 'error':
+                    alert("Произошла ошибка:\n" + data.message);
+                break;
+
+                case 'logout':
+                    alert('Сейчас произойдёт обновление сессии (' + data.message + ')');
+                    document.reload(true);
+                break;
+
+                case 'joined':
+                    alert('Вы подключены к комнате (' + data.room + ')');
+                break;
+
+                case 'chat':
+                    alert("Уважаемый, " + data.login + "! Сообщение из чата комнаты (" + data.to + "):\n" + data.message);
+                break;
+
+                case 'pm':
+                    alert("Уважаемый, " + data.login + "! Личное сообщение:\n" + data.message);
+                break;
+
+            }
+
+        });
+
+        // По какой-то причине не работает
+        primus.on('online', function () {
+            console.log('ONLINE');
+        });
+        primus.on('offline', function () {
+            console.log('OFFLINE');
+        });
+
+    });
+
+</script>
+</body>
+</html>

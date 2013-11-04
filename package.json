@@ -1,0 +1,12 @@
+{
+  "name": "ESPRDemo",
+  "version": "0.0.1",
+  "dependencies": {
+    "redis": "~0.9.0",
+    "connect-redis": "~1.4.5",
+    "primus-rooms": "~1.1.1",
+    "primus": "~1.4.6",
+    "sockjs": "~0.3.8",
+    "express": "~3.4.4"
+  }
+}
