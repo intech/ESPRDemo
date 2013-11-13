@@ -43,50 +43,49 @@
 
     primus.on('open', function () {
         console.log('Connection is alive');
-
         // Подключаемся к комнате
         primus.write({ event: 'join', to: 'chat' });
+    });
 
         // Обрабатываем сообщения
-        primus.on('data', function (data) {
-            console.log('Received a new message from the server', data);
+    primus.on('data', function (data) {
+        console.log('Received a new message from the server', data);
 
-            switch (data.event) {
+        switch (data.event) {
 
-                case 'error':
-                    alert("Произошла ошибка:\n" + data.message);
-                break;
+            case 'error':
+                alert("Произошла ошибка:\n" + data.message);
+            break;
 
-                case 'logout':
-                    alert('Сейчас произойдёт обновление сессии (' + data.message + ')');
-                    document.reload(true);
-                break;
+            case 'logout':
+                alert('Сейчас произойдёт обновление сессии (' + data.message + ')');
+                document.reload(true);
+            break;
 
-                case 'joined':
-                    alert('Вы подключены к комнате (' + data.room + ')');
-                break;
+            case 'joined':
+                alert('Вы подключены к комнате (' + data.room + ')');
+            break;
 
-                case 'chat':
-                    alert("Уважаемый, " + data.login + "! Сообщение из чата комнаты (" + data.to + "):\n" + data.message);
-                break;
+            case 'chat':
+                alert("Уважаемый, " + data.login + "! Сообщение из чата комнаты (" + data.to + "):\n" + data.message);
+            break;
 
-                case 'pm':
-                    alert("Уважаемый, " + data.login + "! Личное сообщение:\n" + data.message);
-                break;
+            case 'pm':
+                alert("Уважаемый, " + data.login + "! Личное сообщение:\n" + data.message);
+            break;
 
-            }
-
-        });
-
-        // По какой-то причине не работает
-        primus.on('online', function () {
-            console.log('ONLINE');
-        });
-        primus.on('offline', function () {
-            console.log('OFFLINE');
-        });
+        }
 
     });
+
+    // По какой-то причине не работает
+    primus.on('online', function () {
+        console.log('ONLINE');
+    });
+    primus.on('offline', function () {
+        console.log('OFFLINE');
+    });
+
 
 </script>
 </body>
